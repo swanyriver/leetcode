@@ -8,15 +8,17 @@ int lengthOfLongestSubstring(char* s) {
     bzero(pos,sizeof(int)*256);
     int longest=0;
     char* begining = s;
+    int length;
     
     while (*s){
         if(!pos[*s]){
-            if(s-begining >= longest)longest = s-begining + 1;
+            length = s-begining;
+            if(length >= longest)longest = length + 1;
             pos[*s]=s;
         } else {
             while (begining < pos[*s]){
                 pos[*begining]=0;
-                begining++;
+                ++begining;
             }
             begining = pos[*s]+1;
             char* point = pos[*s];
