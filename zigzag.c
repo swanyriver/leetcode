@@ -11,17 +11,13 @@ char* convert(char* s, int numRows) {
     
     if(numRows >= len) return s;
     
-    struct cursor {
-        char** cur;
-        struct cursor* next;
-    };
     
     char* answer = malloc(len+1);
     answer[len]=0;
     
     int set = numRows + numRows-2;
 
-    struct cursor* cursors = malloc(sizeof(struct cursor) * set);
+    int* cursors = malloc(sizeof(int*) * set);
     char** rows = malloc(sizeof(char*) * numRows);
     int* lengthofRow = malloc(sizeof(int)*numRows);
   
@@ -58,19 +54,20 @@ char* convert(char* s, int numRows) {
 
     //set cursors to point at appropriate row
     for(i=0;i<set;++i){
-        if(i==set-1) cursors[i].next = cursors;
-        else cursors[i].next = &cursors[i+1];
-
-        if(i<numRows) cursors[i].cur=&rows[i];
-        else cursors[i].cur = &rows[numRows-2-numRows%i];
+        if(i<numRows) cursors[i]=i;
+        else cursors[i] = numRows-2-(i%numRows);
+        //printf("%d [%d]:%p,   ",cursors[i], lengthofRow[cursors[i]], rows[cursors[i]]);
     }
+    //return "hello";
 
-    struct cursor* curs = cursors;
     while(*s){
-        curs->cur**=s*;
-        curs->++cur**;
-        curs = curs->next;
-        ++s;
+        for(i=0;i<set && *s;++i){
+            *(rows[cursors[i]])=*s;
+            //printf("%c:%p",*(rows[cursors[i]]), rows[cursors[i]] );
+            ++s;
+            ++rows[cursors[i]];
+            //printf(" --> %p\n",rows[cursors[i]] );
+        }
     }
 
     return answer;
