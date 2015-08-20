@@ -22,7 +22,7 @@ char* convert(char* s, int numRows) {
     int set = numRows + numRows-2;
 
     struct cursor* cursors = malloc(sizeof(struct cursor) * set);
-    char* rows = malloc(sizeof(char*) * numRows);
+    char** rows = malloc(sizeof(char*) * numRows);
     int* lengthofRow = malloc(sizeof(int)*numRows);
   
 
@@ -50,16 +50,30 @@ char* convert(char* s, int numRows) {
         --remain;
     }
 
-
-    for(i=0;i<numRows;++i){
-        printf("%d,",lengthofRow[i]);
-    }
-    putchar('\n');
-
     //set row pointers
+    rows[0]=answer;
+    for(i=1;i<numRows;++i){
+        rows[i]=rows[i-1]+lengthofRow[i-1];
+    }
 
     //set cursors to point at appropriate row
-    return "hello";
+    for(i=0;i<set;++i){
+        if(i==set-1) cursors[i].next = cursors;
+        else cursors[i].next = &cursors[i+1];
+
+        if(i<numRows) cursors[i].cur=&rows[i];
+        else cursors[i].cur = &rows[numRows-2-numRows%i];
+    }
+
+    struct cursor* curs = cursors;
+    while(*s){
+        curs->cur**=s*;
+        curs->++cur**;
+        curs = curs->next;
+        ++s;
+    }
+
+    return answer;
     
 }
 
