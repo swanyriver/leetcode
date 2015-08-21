@@ -34,12 +34,13 @@ char* convert(char* s, int numRows) {
         cur = s+i;
         add -=2;
         curB = cur + add;
+
         while(cur<endpoint){
             *answer = *cur;
             ++answer;
             cur+=set;
 
-            if(curB>endpoint) break;
+            if(curB>=endpoint) break;
 
             *answer = *curB;
             ++answer;
