@@ -24,10 +24,13 @@ char* convert(char* s, int numRows) {
 
     //struct cursor sizecur;
 
-    struct cursor* cursors = malloc(sizeof(struct cursor) * (set+1));
+    int strucSize = sizeof(struct cursor);
+
+    struct cursor* cursors = malloc(strucSize * set);
     char** rows = malloc(sizeof(char*) * numRows);
     int* lengthofRow = malloc(sizeof(int)*numRows);
   
+    int addroffset = &cursors[1] - cursors;
 
     //set row lengths
     int firstlen = len/set;
@@ -60,24 +63,26 @@ char* convert(char* s, int numRows) {
     }
 
     //set cursors to point at appropriate row
-    for(i=0;i<numRows;++i){
-
-        cursors[i].next=&cursors[i+1];
-        cursors[i].cur= &rows[i];
-
-        //if(i<numRows) cursors[i]=i;
-        //else cursors[i] = numRows-2-(i%numRows);
-        //printf("%d [%d]:%p,   ",cursors[i], lengthofRow[cursors[i]], rows[cursors[i]]);
-    }
-    for(;i<set;++i){
-        cursors[i].next=&cursors[i+1];
-        cursors[i].cur = &rows[numRows+2-i];
-    }
-
-    cursors[set-1].next=cursors;
-    //return "hello";
-
+    struct cursor* endloop = cursors + addroffset*numRows;
     struct cursor* mycursor = cursors;
+    i=0;
+    for(;mycursor<endloop;mycursor+=addroffset){
+
+        mycursor->next=mycursor+addroffset;
+        mycursor->cur= &rows[i];
+        i++;
+    }
+    endloop = cursors + addroffset*set;
+    for(;mycursor<endloop;mycursor+=addroffset){
+        mycursor->next=mycursor+addroffset;
+        mycursor->cur = &rows[numRows+2-i];
+        i++;
+    }
+
+    mycursor-=addroffset;
+    mycursor->next=cursors;
+
+    mycursor = cursors;
     while(*s){
         **(mycursor->cur)=*s;
         ++s;
