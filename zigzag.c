@@ -65,18 +65,19 @@ char* convert(char* s, int numRows) {
     //set cursors to point at appropriate row
     struct cursor* endloop = cursors + addroffset*numRows;
     struct cursor* mycursor = cursors;
-    i=0;
+    char** rowpoint = rows;
+    int rowaddroffset = &rows[1]-rows;
     for(;mycursor<endloop;mycursor+=addroffset){
-
         mycursor->next=mycursor+addroffset;
-        mycursor->cur= &rows[i];
-        i++;
+        mycursor->cur= rowpoint;
+        rowpoint += rowaddroffset;
     }
     endloop = cursors + addroffset*set;
+    rowpoint -= rowaddroffset;
     for(;mycursor<endloop;mycursor+=addroffset){
+        rowpoint -= rowaddroffset;
         mycursor->next=mycursor+addroffset;
-        mycursor->cur = &rows[numRows+2-i];
-        i++;
+        mycursor->cur = rowpoint;
     }
 
     mycursor-=addroffset;
