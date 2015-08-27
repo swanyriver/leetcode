@@ -21,8 +21,6 @@ int* twoSum(int* nums, int numsSize, int target) {
             sumsides[nums[i]]=++i;
         }
     }
-
-    //return answer;
     
 }
 
