@@ -2,50 +2,128 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 struct ListNode {
     int val;
     struct ListNode *next;
 };
 
-struct ListNode* mergeKLists(struct ListNode** lists, int listsSize){
+void heapify(struct ListNode** lists, int listsSize){
+    int leftchild, rightchild;
+    struct ListNode* temp;
+    for(int i = (listsSize >> 1) - 1; i>=0; --i ){
+        leftchild = (i<<1) +1;
+        rightchild = (i<<1) +2;
 
-    struct ListNode* head = 0;
-    struct ListNode* current = malloc(sizeof (struct ListNode));
-    struct ListNode** nextPoint;
-    int min;
-
-
-    for(struct ListNode** i = lists; i < lists+listsSize;){
-        if(!*i){
-            --listsSize;
-            for(struct ListNode** v = i; v<lists+ listsSize; v+=1) *v = *(v+1);
-        } else i += 1;
-    }
-
-    while(listsSize > 1){
-        min = lists[0]->val;
-
-        for(struct ListNode** i = lists; i < lists+listsSize; i+=1){
-            if((*i)->val <= min ) {
-                min = (*i)->val;
-                nextPoint = i;
-            }
+        if(lists[i]->val > lists[leftchild]->val){
+            temp = lists[i];
+            lists[i] = lists[leftchild];
+            lists[leftchild]=temp;
         }
 
-        if(!head)head = *nextPoint;
-        current->next = *nextPoint;
-        current = *nextPoint;
-        *nextPoint = (*nextPoint)->next;
-        if(!(*nextPoint)){
-            --listsSize;
-            for(struct ListNode** v = nextPoint; v<lists+ listsSize; v+=1) *v = *(v+1);
-        } 
+        if(rightchild < listsSize){
+            //check both childs
+            if(lists[i]->val > lists[rightchild]->val){
+                temp = lists[i];
+                lists[i] = lists[rightchild];
+                lists[rightchild]=temp;
+
+                if(lists[i]->val > lists[leftchild]->val){
+                    temp = lists[i];
+                    lists[i] = lists[leftchild];
+                    lists[leftchild]=temp;
+                }
+            }
+        }
     }
-    current->next = lists[0];
 
-    if(!head) head = lists[0];
 
-    return head;
+   /* printf("heaped (%d)\n", listsSize );
+
+    //for testing
+    int level = 1;
+    int levelcount=0;
+    for (int i = 0; i < listsSize; ++i)
+    {
+        if(levelcount==level){
+            putchar('\n');
+            level *= 2;
+            levelcount=0;
+        }
+        printf(" %d ", lists[i]->val);
+        ++levelcount;
+    }
+    putchar('\n');
+    exit(0);*/
+
+}
+
+struct ListNode* mergeKLists(struct ListNode** lists, int listsSize){
+    if(listsSize<=1) return *lists;
+
+    struct ListNode* head = malloc(sizeof(struct ListNode));
+    struct ListNode* current = head;
+
+
+    for(int i=0;i<listsSize;++i){
+        if(!lists[i]){
+            --listsSize;
+            for (int v = i; v < listsSize; ++v) lists[v]=lists[v+1];
+        }
+    }
+
+
+    heapify(lists,listsSize);
+
+    int i, rightchild, leftchild, smallchild;
+    struct ListNode* temp;
+
+
+    while(listsSize){
+        temp = lists[0]->next;
+        current->next = lists[0];
+        current = current->next;
+
+        lists[0]=temp;
+        if(!lists[0]){
+           --listsSize;
+           lists[0]=lists[listsSize];
+        }
+
+        if(listsSize){
+            i=0;
+            //percolate down
+            while(i<listsSize/2){
+                leftchild = (i<<1) +1;
+                rightchild = (i<<1) +2;
+
+                if(rightchild >= listsSize){
+                    //only left child
+                    if(lists[i]->val < lists[leftchild]->val) break;
+                    temp = lists[i];
+                    lists[i]=lists[leftchild];
+                    lists[leftchild]=temp;
+                    break;
+                } else {
+                    if(lists[i]->val < lists[leftchild]->val && lists[i]->val < lists[rightchild]->val) break;
+
+                    if(lists[leftchild]->val < lists[rightchild]->val) smallchild = leftchild;
+                    else smallchild = rightchild;
+
+                    temp = lists[i];
+                    lists[i]=lists[smallchild];
+                    lists[smallchild]=temp;
+                    i=smallchild;
+
+                }
+
+            }
+        }
+    }
+
+    return head->next;
+
+
 }
 
 struct ListNode** generate( int numLists){
@@ -57,7 +135,6 @@ struct ListNode** generate( int numLists){
 
         int val = rand()%10;
 
-        if(rand()%2){
             lists[i] = malloc(sizeof(struct ListNode));
 
             lists[i]->val = val;
@@ -71,7 +148,6 @@ struct ListNode** generate( int numLists){
                 current->val = val;
             }
             current->next = NULL;
-        } else lists[i] = NULL;
     }
 
     return lists;
@@ -97,13 +173,15 @@ int main(){
 
     srand (time(NULL));
 
-    int numLists = rand() % 6 + 1;
+    int numLists = rand() % 20 + 1;
 
     struct ListNode** myLists = generate( numLists );
 
     display(myLists,numLists);
 
     struct ListNode* mergedList = mergeKLists(myLists, numLists);
+
+    printf("merged bitches:\n");
 
     while(mergedList){
         printf("%d->", mergedList->val);
