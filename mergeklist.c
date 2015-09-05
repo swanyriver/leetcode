@@ -8,14 +8,34 @@ struct ListNode {
     struct ListNode *next;
 };
 
+void printheap(struct ListNode** lists, int listsSize){
+    //printf("heaped (%d)\n", listsSize );
+    putchar('\n');
+
+    //for testing
+    int level = 1;
+    int levelcount=0;
+    for (int i = 0; i < listsSize; ++i)
+    {
+        if(levelcount==level){
+            putchar('\n');
+            level *= 2;
+            levelcount=0;
+        }
+        printf(" %d ", lists[i]->val);
+        ++levelcount;
+    }
+    putchar('\n');
+}
+
 void heapify(struct ListNode** lists, int listsSize){
-    int leftchild, rightchild;
+    int leftchild, rightchild, smallchild;
     struct ListNode* temp;
     for(int i = (listsSize >> 1) - 1; i>=0; --i ){
         leftchild = (i<<1) +1;
         rightchild = (i<<1) +2;
 
-        if(lists[i]->val > lists[leftchild]->val){
+        /*if(lists[i]->val > lists[leftchild]->val){
             temp = lists[i];
             lists[i] = lists[leftchild];
             lists[leftchild]=temp;
@@ -34,27 +54,43 @@ void heapify(struct ListNode** lists, int listsSize){
                     lists[leftchild]=temp;
                 }
             }
+        }*/
+
+        //need to send down all the way to bottom
+        int v=i;
+        while(v<listsSize/2){
+            leftchild = (v<<1) +1;
+            rightchild = (v<<1) +2;
+
+            if(rightchild >= listsSize){
+                //only left child
+                if(lists[v]->val < lists[leftchild]->val) break;
+                temp = lists[v];
+                lists[v]=lists[leftchild];
+                lists[leftchild]=temp;
+                break;
+            } else {
+                if(lists[v]->val < lists[leftchild]->val && lists[v]->val < lists[rightchild]->val) break;
+
+                if(lists[leftchild]->val < lists[rightchild]->val) smallchild = leftchild;
+                else smallchild = rightchild;
+
+                temp = lists[v];
+                lists[v]=lists[smallchild];
+                lists[smallchild]=temp;
+                v=smallchild;
+            }
+
         }
+
+
+        //end of percolate down
+
+
+
     }
 
-
-   /* printf("heaped (%d)\n", listsSize );
-
-    //for testing
-    int level = 1;
-    int levelcount=0;
-    for (int i = 0; i < listsSize; ++i)
-    {
-        if(levelcount==level){
-            putchar('\n');
-            level *= 2;
-            levelcount=0;
-        }
-        printf(" %d ", lists[i]->val);
-        ++levelcount;
-    }
-    putchar('\n');
-    exit(0);*/
+    printheap(lists,listsSize);
 
 }
 
@@ -64,13 +100,17 @@ struct ListNode* mergeKLists(struct ListNode** lists, int listsSize){
     struct ListNode* head = malloc(sizeof(struct ListNode));
     struct ListNode* current = head;
 
-
-    for(int i=0;i<listsSize;++i){
+    
+    for(int i = listsSize -1; i>=0; --i){
         if(!lists[i]){
+            for(int v=i; v<listsSize; ++v) lists[v] = lists[v+1];
             --listsSize;
-            for (int v = i; v < listsSize; ++v) lists[v]=lists[v+1];
         }
     }
+    
+    //printf("lists:%d\n",listsSize);
+    
+    if(!listsSize) return *lists;
 
 
     heapify(lists,listsSize);
@@ -80,6 +120,9 @@ struct ListNode* mergeKLists(struct ListNode** lists, int listsSize){
 
 
     while(listsSize){
+        
+        //printheap(lists,listsSize);
+        
         temp = lists[0]->next;
         current->next = lists[0];
         current = current->next;
@@ -122,8 +165,6 @@ struct ListNode* mergeKLists(struct ListNode** lists, int listsSize){
     }
 
     return head->next;
-
-
 }
 
 struct ListNode** generate( int numLists){
