@@ -14,15 +14,25 @@ class Solution(object):
         """
 
         if not words: return []
+
+        wordlength = len(words[0])
         
-        wordsinString = []
+        
         answer = []
         words.sort()
 
-        wordlength = len(words[0])
+        
+        # wordsinString = []
+        # for i in range(0,len(s) - wordlength + 1):
+        #     wordsinString.append( inthere( words, s[i:i+wordlength] ) )
+
+        wordsinString =  [ [] for x in range(wordlength)  ]
+        listgroup = 0
 
         for i in range(0,len(s) - wordlength + 1):
-            wordsinString.append( inthere( words, s[i:i+wordlength] ) )
+            wordsinString[listgroup%wordlength].append( inthere( words, s[i:i+wordlength] ) )
+            listgroup+=1
+
 
 
         #testing
@@ -34,7 +44,7 @@ class Solution(object):
         return answer
 
 
-s = "barfoothefoobarman"
+s = "barfoothefoobarmannbarfooobar"
 words = ["foo", "bar"]
 o = Solution()
 result = o.findSubstring(s,words)
