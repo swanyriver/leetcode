@@ -180,3 +180,18 @@ def polynumber(sides,n):
 
 def ceildiv(a, b):
     return -(-a // b)
+
+
+class addList(list):
+    def __init__(self):
+        self.sum = 0
+    def copy(self):
+        c = addList()
+        c.sum = self.sum
+        c.extend(self)
+        return c
+    def append(self,x):
+        super(addList, self).append(x)
+        self.sum += x
+    def pop(self):
+        self.sum -= super(addList, self).pop()
