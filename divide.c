@@ -18,7 +18,8 @@ int divide(int dividend, int divisor) {
 
     int i = 0;
     int mask = 1;
-    while(! (dividend & mask ||  divisor & mask ) ){
+    //while(! (dividend & mask ||  divisor & mask ) ){
+    while(!  divisor & mask  ){
         mask *=2;
         ++i;
     }

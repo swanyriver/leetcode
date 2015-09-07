@@ -51,12 +51,12 @@ char** fullJustify(char** words, int wordsSize, int maxWidth, int* returnSize) {
                 //write word
                 wordR = *word;
                 while(*wordR) *output++ = *wordR++;
-                *output++ = '*';
+                *output++ = ' ';
                 ++word;
             }
             wordR = *word;
             while(*wordR) *output++ = *wordR++;
-            while(output-lines[linenum]<maxWidth) *output++ = '*';
+            while(output-lines[linenum]<maxWidth) *output++ = ' ';
             *output++ = 0;
 
         }else {
@@ -72,8 +72,8 @@ char** fullJustify(char** words, int wordsSize, int maxWidth, int* returnSize) {
                 wordR = *word;
                 while(*wordR) *output++ = *wordR++;
 
-                for (int v = 0; v < spaceS; ++v) *output++ = '*';
-                if(i<numSpaceL) *output++ = '*';
+                for (int v = 0; v < spaceS; ++v) *output++ = ' ';
+                if(i<numSpaceL) *output++ = ' ';
                 ++word;
             }
             wordR = *word;
