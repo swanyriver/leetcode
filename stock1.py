@@ -18,7 +18,7 @@ class Chain(object):
     def __len__(self):
         return self.count
 
-    def add(self,s):
+    def append(self,s):
         s.prev = self.end
         s.next = None
         self.end = s
@@ -58,49 +58,31 @@ class Chain(object):
         
 
 class Solution(object):
-    def maxProfit(self, prices):
-        """
-        :type prices: List[int]
-        :rtype: int
-        """
-    # def maxProfit(self, k, prices):
+    # def maxProfit(self, prices):
     #     """
-    #     :type k: int
     #     :type prices: List[int]
     #     :rtype: int
     #     """
-        k=2
+    #     k=2
+    def maxProfit(self, k, prices):
+        """
+        :type k: int
+        :type prices: List[int]
+        :rtype: int
+        """
 
-        # low = prices[0]
-        # highestprofit =0
+        if len(prices)<2 or k <1: return 0
 
-        # for p in prices:
-        #     if p < low: low = p;
-        #     elif p - low > highestprofit: highestprofit = p-low
 
-        # return highestprofit
+        
 
-        class slopeDict(dict):
-            """docstring for ClassName"""
-            def __init__(self):
-                #super(ClassName, self).__init__()
-                self.lastAddedID = None
-                self.nextId = 1
-            def append(self, s):
-                self[self.nextId]=s
-                s.ID = self.nextId
-                if self.lastAddedID: self[self.lastAddedID].next = self.nextId
-                self.lastAddedID = self.nextId
-                self.nextId+=1
-                
 
-        slopes = slopeDict()
-
+        slopes = Chain()
 
 
         i = 0
         while i<len(prices):
-            mylocal = local(prices[i],None,slopes.lastAddedID)
+            mylocal = local(prices[i],None)
 
             while i<len(prices) and prices[i]<=mylocal.min:
                 mylocal.min = prices[i]
@@ -112,49 +94,51 @@ class Solution(object):
                 i+=1
             slopes.append(mylocal)
 
-        print prices
-        print slopes
-        print "------------------------------"
+        # print prices
+        # print slopes
+        # print "------------------------------"
 
         def elimc(s):
-            if s.next and slopes[s.next].max > s.max: 
+            if s.next and s.next.max > s.max and s.next.min > s.min: 
                 s.merge = True
-                return (s.diff() + slopes[s.next].diff()) - (slopes[s.next].max - s.min)
+                s.elimcost= (s.diff() + s.next.diff()) - (s.next.max - s.min)
             else : 
                 s.merge = False
-                return s.max-s.min
+                s.elimcost = s.max-s.min
+            return s
+        # def attachelim(s):
+        #     s.elimcost = elimc(s)
+        #     return s
 
-        pque = []
+        map(elimc,slopes)
 
-        for s in slopes.values():
-            pque.append( (elimc(s),s) )
-
-        heapq.heapify(pque)
-
-        for s in pque:
-            print s
+        # for s in slopes:
+        #     print s, s.elimcost
+        # print len(slopes)
 
         while len(slopes) > k:
-            pass
             #get the next lowest
+            smallest = slopes.begining
+            for s in slopes:
+                if s.elimcost < smallest.elimcost: smallest = s
 
-            #heap pop (while id not in slopes dict)
+            if not smallest.merge: 
+                slopes.remove(smallest)
+            else:
+                smallest.next.min = smallest.min
+                elimc(smallest.next)
+                slopes.remove(smallest)
 
-            #NOT MERGE
-            #stich prev and next
-            #remove from slopes dict
+            if smallest.next: elimc(smallest.next)
+            if smallest.prev: elimc(smallest.prev)
 
-            #MERGE
-            #create new item and remove both merged list from dict
-            #cache prev and next objects from
-            #add item to dictionary
-            #set new items prev, next
-            #set neighbors to point at new index
-            #recaculate elimcost for neighbors
+            #print slopes,
+            #print sum(map(lambda s:s.diff(),slopes))
 
 
 
         #sum up diffs
+        return sum(map(lambda s:s.diff(),slopes))
             
 
 
@@ -164,7 +148,6 @@ x = Solution()
 # x.maxProfit([1,3,3,3,4,4,5,2,8,9,6])
 # x.maxProfit([5,3,5,6,8,8,2,8,9,6])
 #x.maxProfit([5,3,5,6,8,8,2,8,9,6,10,1,3,4,0,3,1,9])
+print x.maxProfit(2, [2,6,8,7,8,7,9,4,1,2,4,5,8])
 
-c = Chain()
-for x in range(10): c.add( local(x,x+3))
 
