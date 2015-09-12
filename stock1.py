@@ -1,11 +1,14 @@
+import heapq
 class local(object):
     """docstring for ClassName"""
-    def __init__(self, min, max):
+    def __init__(self, Min, Max, prev):
         #super(local, self).__init__()
-        self.min = min
-        self.max = max
+        self.min = Min
+        self.max = Max
+        self.prev = prev
+        self.next = None
     def __repr__(self):
-        return "(%d,%d)"%(self.min,self.max)
+        return "(%d,%d) id:%r p:%r, n:%r"%(self.min,self.max, self.ID, self.prev, self.next)
     def diff(self): return self.max - self.min
 
         
@@ -32,12 +35,29 @@ class Solution(object):
         #     elif p - low > highestprofit: highestprofit = p-low
 
         # return highestprofit
-        slopes = []
 
-        #mylocal = local(prices[0],None)
+        class slopeDict(dict):
+            """docstring for ClassName"""
+            def __init__(self):
+                #super(ClassName, self).__init__()
+                self.lastAddedID = None
+                self.nextId = 1
+            def append(self, s):
+                self[self.nextId]=s
+                s.ID = self.nextId
+                if self.lastAddedID: self[self.lastAddedID].next = self.nextId
+                self.lastAddedID = self.nextId
+                self.nextId+=1
+                
+
+        slopes = slopeDict()
+
+
+
         i = 0
         while i<len(prices):
-            mylocal = local(prices[i],None)
+            mylocal = local(prices[i],None,slopes.lastAddedID)
+
             while i<len(prices) and prices[i]<=mylocal.min:
                 mylocal.min = prices[i]
                 i+=1
@@ -58,18 +78,35 @@ class Solution(object):
         # plt.ylabel('price')
         # plt.show()
 
-        def elimc(s1,s2):
-            return (s1.diff() + s2.diff()) - (s2.max - s1.min)
+        # def elimc(s1,s2):
+        #     return (s1.diff() + s2.diff()) - (s2.max - s1.min)
+        def elimc(s):
+            if s.next and slopes[s.next].max > s.max: 
+                s.merge = True
+                return (s.diff() + slopes[s.next].diff()) - (slopes[s.next].max - s.min)
+            else : 
+                s.merge = False
+                return s.max-s.min
 
-        for i in xrange(len(slopes)):
-            if i<len(slopes)-1 and slopes[i+1].max > slopes[i].max:
-                #calculate merge cost
-                slopes[i].elimCost = elimc(slopes[i],slopes[i+1])
-            else:
-                slopes[i].elimCost = slopes[i].diff()
-        
-        for s in slopes:
-            print s, s.elimCost
+        pque = []
+
+        for s in slopes.values():
+            pque.append( (elimc(s),s) )
+        # for i in xrange(len(slopes)):
+        #     if i<len(slopes)-1 and slopes[i+1].max > slopes[i].max:
+        #         #calculate merge cost
+        #         slopes[i].elimCost = elimc(slopes[i],slopes[i+1])
+        #     else:
+        #         slopes[i].elimCost = slopes[i].diff()
+        #     #pque.append(slopes[i])
+            ##need to make a tuple 
+
+        heapq.heapify(pque)
+        for s in pque:
+            print s
+
+        #while len(slopes) > k:
+            
 
 
 
