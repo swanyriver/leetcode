@@ -62,11 +62,9 @@ struct ListNode* reverseKGroup(struct ListNode* head, int k) {
     struct ListNode* read=head;
     int count;
 
-
     while(1){
         count =0;
         while(kend && count++<k){
-            //printf("kend %p->%d  c:%d\n", kend, kend->val,count);
             kend = kend->next; 
         }
         if (count < k) return head;
@@ -78,18 +76,11 @@ struct ListNode* reverseKGroup(struct ListNode* head, int k) {
             tmp = read->next;
             read->next = butt;
             butt = read;
-            //if (tmp == kend) break;
             read = tmp;
         }
         *first = butt;
         first = nextFirst;
-        //printf("first:%p  head:%p\n", *first, head );
-
-        //first = &(read->next);
-        //if(read)read = read->next;
     }
-
-    
 }
 
 int main(){

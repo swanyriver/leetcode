@@ -35,27 +35,6 @@ void heapify(struct ListNode** lists, int listsSize){
         leftchild = (i<<1) +1;
         rightchild = (i<<1) +2;
 
-        /*if(lists[i]->val > lists[leftchild]->val){
-            temp = lists[i];
-            lists[i] = lists[leftchild];
-            lists[leftchild]=temp;
-        }
-
-        if(rightchild < listsSize){
-            //check both childs
-            if(lists[i]->val > lists[rightchild]->val){
-                temp = lists[i];
-                lists[i] = lists[rightchild];
-                lists[rightchild]=temp;
-
-                if(lists[i]->val > lists[leftchild]->val){
-                    temp = lists[i];
-                    lists[i] = lists[leftchild];
-                    lists[leftchild]=temp;
-                }
-            }
-        }*/
-
         //need to send down all the way to bottom
         int v=i;
         while(v<listsSize/2){

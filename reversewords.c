@@ -37,16 +37,10 @@ void reverseWords(char *s) {
         while(*R && *R != ' ') ++R;
         endofword = R;
 
-        //putchar(*R); putchar(*(R-1)); putchar('\n');
-
         ++L;
         while(++L<R){
-            //printf("%c %c: %s\n", *L, *--R,s);
-
-            //putchar(*L); putchar(*R); putchar('\n');
             temp = *L;
             *L = *--R;
-            //*L = *R;
             *R = temp;
         }
 
@@ -57,7 +51,6 @@ void reverseWords(char *s) {
     while(*endofword == ' ') --endofword;
     *++endofword=0;
 
-    
 }
 
 int main(int argc, char const *argv[])
