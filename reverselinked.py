@@ -18,8 +18,16 @@ while(node):
     print node.val, '->',
     node = node.next
 
+s = head
+f = head
+while(f):
+    s = s.next
+    f = f.next
+    if f: f = f.next
+
+
 newlist = None
-node = head
+node = s
 
 while node:
     tmp = node.next
