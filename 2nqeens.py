@@ -35,7 +35,7 @@ def propogateAttack(attack,x,y):
 
     return rAttack
 
-def placeQ(x,n,prevAtk, qplaces, answers):
+def placeQ(x,n,prevAtk, answer):
 
     for y in range(n):
 
@@ -50,9 +50,12 @@ def placeQ(x,n,prevAtk, qplaces, answers):
             # print '----------------------------'
 
             if x == n-1: 
-                answers.append( qplaces + [y] )
+                #answers.append( qplaces + [y] )
+                answer +=1
             else:
-                placeQ(x+1,n,propogateAttack(prevAtk,x,y),qplaces + [y], answers)
+                answer = placeQ(x+1,n,propogateAttack(prevAtk,x,y), answer)
+
+    return answer
 
 
 class Solution(object):
@@ -62,17 +65,17 @@ class Solution(object):
         :rtype: List[List[str]]
         """
 
-        answer = []
         attack = [ [False]*n for i in range(n) ]
 
 
-        placeQ(0,n,attack,[],answer)
+        return placeQ(0,n,attack,0)
 
         #return answer
 
-        return [ ["".join(['Q' if x==row else '.' for x in range(n)]) for row in solv] for solv in answer ]
+        #return [ ["".join(['Q' if x==row else '.' for x in range(n)]) for row in solv] for solv in answer ]
+        #return answer
 
-n = 4
+n = 5
 x = Solution()
 print x.solveNQueens(n)
 
