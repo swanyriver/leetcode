@@ -4,7 +4,7 @@ class Node(object):
         self.val = arg
         self.next = None
 
-a = range(1,10)
+a = range(1,9)
 
 head = Node(0)
 node = head
@@ -36,6 +36,12 @@ while node:
     node = tmp
 
 
+print ' '
+node = head
+while(node):
+    print node.val, '->',
+    node = node.next
+        
 print ' '
 node = newlist
 while(node):
