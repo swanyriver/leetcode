@@ -4,7 +4,7 @@
 #         self.val = x
 #         self.left = None
 #         self.right = None
-
+   
 def inTree(t,v):
     s = [t]
     while s:
@@ -15,22 +15,29 @@ def inTree(t,v):
 
     return False
 
-def pathToValue(t,p,q, path):
-    
-    if not t: return False
+def pathto(t,p,q):
+    s = []
+    current = t
 
-    if t is p:
-        path.append(t)
-        return q
-    if t is q:
-        path.append(t)
-        return p
+    while s or current:
+        if current:
 
-    search = pathToValue(t.left,p,q,path) or pathToValue(t.right,p,q,path)
-    if search:
-        path.append(t)
-        return search
-    return False
+            if current is p:
+                return q,s,p
+            if current is q:
+                return p,s,q
+
+            s.append(current)
+            current = current.left
+        else:
+            current = s.pop()
+            
+            if current is p:
+                return q,s,p
+            if current is q:
+                return p,s,q
+
+            current = current.right
 
 
 class Solution(object):
@@ -41,36 +48,35 @@ class Solution(object):
         :type q: TreeNode
         :rtype: TreeNode
         """
+
+        if p is root or q is root: return root
         
-        path = []
-        other = pathToValue(root,p,q,path)
+        other,path,self = pathto(root,p,q)
 
-        #path.reverse()
+        print other,path,self
 
-        print path, other
 
-        if inTree(path[0],other): return path[0]
-        #path.pop()
+        if inTree(self,other): return self
 
-        #print inTree(t,other)
-
-        #while path:
-            # print path
-            # n = path.pop()
-            # print "n:",n
-            # print n.right and True
-        for n in path[1:]:
-            print n
+        for n in path[::-1]:
             if n.right and inTree(n.right,other): return n
             
 
 import treetrav
 
 t = treetrav.makeTree(range(20),0)
-p = t.right.left
-q = t.right.right.left
+#p = t.left.left
+#q = t.right.right.left
+p = t.left.left
+q = p.left
 
 print p,q
+
+
+# t = treetrav.makeTree([1,2],0)
+# p = t
+# q = t.right
+
 
 x = Solution()
 l = x.lowestCommonAncestor(t,p,q)
